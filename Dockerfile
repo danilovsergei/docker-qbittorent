@@ -1,7 +1,7 @@
 FROM alpine:latest AS builder
 
 # Install git and dependencies
-RUN apk add --no-cache git make cmake g++ boost-dev openssl-dev qt6-qttools-dev
+RUN apk add --no-cache git make cmake g++ boost-dev openssl-dev qt6-qtbase-dev qt6-qttools-dev qt6-qtbase-private-dev
 
 # Download libtorrent and qBittorrent
 RUN git clone https://github.com/qbittorrent/qBittorrent.git
@@ -16,12 +16,6 @@ RUN cd libtorrent && \
 
 # Build and install qBittorrent
 RUN cd qBittorrent && \
-    cmake -B build -DCMAKE_BUILD_TYPE=Release -DGUI=OFF && \
-    cmake --build build && \
-    cmake --install build
-
-RUN cd qBittorrent && \
-    apk add --no-cache qt6-qttools-dev && \
     cmake -B build -DCMAKE_BUILD_TYPE=Release -DGUI=OFF && \
     cmake --build build && \
     cmake --install build
