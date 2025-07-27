@@ -25,3 +25,10 @@ Here is a dump of command line what systemd runs:
 
 # Usage
 Qbittorrent will listen on <your_host>:8080 port 
+
+# Update docker image
+To update existing docker image run 
+```
+docker pull geonix/qbittorrent:latest && \
+systemctl restart qbittorrent
+```
