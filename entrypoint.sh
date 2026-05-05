@@ -26,5 +26,5 @@ fi
 # qbittorrent will create files by defaul with read and write permissions for everyone
 umask 0000
 su qbittorrent << EOF
-HOME="$home_dir" XDG_CONFIG_HOME="$home_dir" XDG_DATA_HOME="$home_dir" qbittorrent-nox --webui-port=$WEBUI_PORT
+HOME="$home_dir" XDG_CONFIG_HOME="$home_dir" XDG_DATA_HOME="$home_dir" qbittorrent-nox --confirm-legal-notice --webui-port=$WEBUI_PORT
 EOF
