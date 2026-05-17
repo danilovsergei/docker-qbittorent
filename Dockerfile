@@ -10,14 +10,14 @@ RUN git clone --recursive https://github.com/arvidn/libtorrent.git
 # Build and install libtorrent
 RUN cd libtorrent && \
     cmake -DCMAKE_INSTALL_LIBDIR=lib . && \
-    make -j`nproc` && \
+    make -j$(nproc) && \
     make install && \
     strip /usr/local/lib/libtorrent-rasterbar.so.2.0
 
 # Build and install qBittorrent
 RUN cd qBittorrent && \
     cmake -B build -DCMAKE_BUILD_TYPE=Release -DGUI=OFF && \
-    cmake --build build && \
+    cmake --build build --parallel $(nproc) && \
     cmake --install build
 
 FROM alpine:latest
