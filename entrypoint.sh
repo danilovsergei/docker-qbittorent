@@ -24,29 +24,30 @@ else
     echo "Error $home_dir/qBittorrent/qBittorrent.conf is not provided"
 fi
 
-# =====================================================================
-# STALE LOCK CLEANUP FOR QLOCKFILE
-# =====================================================================
-# Qt's QLockFile causes an early exit if a stale lock file or socket
-# remains from an ungraceful container shutdown.
-# =====================================================================
 target_dir="$home_dir/qBittorrent"
 if [ -d "$target_dir" ]; then
     echo "[INFO] Checking for stale IPC frameworks..."
-
     if [ -f "$target_dir/lockfile" ] || [ -f "$target_dir/ipc-socket" ]; then
         echo "[WARNING] Stale lockfile or IPC socket detected. Clearing communication channel."
-
-        # Ensure root can remove them regardless of past ownership mismatches
         chown -R $CHUID:$CHGID "$target_dir"
-
         rm -f "$target_dir/lockfile"
         rm -f "$target_dir/ipc-socket"
     fi
 fi
 
-# qbittorrent will create files by default with read and write permissions for everyone
+if [ "$ENABLE_GLIDER" = "true" ] || [ "$ENABLE_GLIDER" = "1" ]; then
+    if [ -f "/etc/glider/glider.conf" ]; then
+    echo "[INFO] Starting bundled glider proxy..."
+    /usr/bin/glider -config /etc/glider/glider.conf &
+else
+        echo "[WARNING] ENABLE_GLIDER is true, but /etc/glider/glider.conf not found. Bundled proxy will not start."
+    fi
+else
+    echo "[INFO] Glider proxy is disabled (ENABLE_GLIDER is not true)."
+
+fi
+
 umask 0000
-su qbittorrent << EOF
+su qbittorrent << INNEREOF
 HOME="$home_dir" XDG_CONFIG_HOME="$home_dir" XDG_DATA_HOME="$home_dir" qbittorrent-nox --confirm-legal-notice --webui-port=$WEBUI_PORT
-EOF
+INNEREOF

@@ -1,3 +1,8 @@
+FROM golang:alpine AS glider-builder
+RUN apk add --no-cache git
+RUN git clone https://github.com/danilovsergei/glider.git /glider_src
+RUN cd /glider_src && go build -v -ldflags "-s -w" -o /glider
+
 FROM alpine:latest AS builder
 
 # Install build dependencies
@@ -21,6 +26,9 @@ RUN git clone https://github.com/qbittorrent/qBittorrent.git && \
 # Final runtime image
 FROM alpine:latest
 
+# Get patched glider
+COPY --from=glider-builder /glider /usr/bin/glider
+
 # Copy built shared libraries and binary
 COPY --from=builder /usr/local/lib/libtorrent-rasterbar.so* /usr/lib/
 COPY --from=builder /usr/local/bin/qbittorrent-nox /usr/bin/qbittorrent-nox
@@ -31,8 +39,8 @@ RUN apk add --no-cache qt6-qtbase qt6-qtsvg shadow tzdata libgcc libstdc++ boost
 COPY entrypoint.sh /entrypoint.sh
 
 ENV TZ=America/Los_Angeles
-ENV WEBUI_PORT="8080" CHUID=1000 CHGID=1000
+ENV WEBUI_PORT="8080" CHUID=1000 CHGID=1000 ENABLE_GLIDER="false"
 
-EXPOSE 6881 6881/udp 8080
+EXPOSE 6881 6881/udp 8080 1081 1081/udp
 
 ENTRYPOINT ["/entrypoint.sh"]
