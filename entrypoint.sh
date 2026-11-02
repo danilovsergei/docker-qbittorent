@@ -35,7 +35,7 @@ if [ -d "$target_dir" ]; then
     fi
 fi
 
-if [ "$ENABLE_GLIDER" = "true" ] || [ "$ENABLE_GLIDER" = "1" ]; then
+if [ "$ENABLE_GLIDER" = "true" ] || [ "$ENABLE_GLIDER" = "1" ] || [ -f "/etc/glider/glider.conf" ]; then
     if [ -f "/etc/glider/glider.conf" ]; then
     echo "[INFO] Starting bundled glider proxy..."
     /usr/bin/glider -config /etc/glider/glider.conf &

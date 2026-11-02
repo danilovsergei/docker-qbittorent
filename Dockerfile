@@ -34,7 +34,7 @@ COPY --from=builder /usr/local/lib/libtorrent-rasterbar.so* /usr/lib/
 COPY --from=builder /usr/local/bin/qbittorrent-nox /usr/bin/qbittorrent-nox
 
 # Install runtime dependencies
-RUN apk add --no-cache qt6-qtbase qt6-qtsvg shadow tzdata libgcc libstdc++ boost-system
+RUN apk add --no-cache qt6-qtbase qt6-qtsvg shadow tzdata libgcc libstdc++ boost-system curl
 
 COPY entrypoint.sh /entrypoint.sh
 
